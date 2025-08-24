@@ -1,5 +1,5 @@
 use axum::{
-    http::StatusCode,
+    http::{HeaderMap, StatusCode},
     response::{IntoResponse, Response},
     Json,
 };
@@ -10,6 +10,7 @@ use std::fmt;
 pub struct AppError {
     pub status: StatusCode,
     pub message: String,
+    pub headers: Option<HeaderMap>,
 }
 
 impl AppError {
@@ -17,7 +18,13 @@ impl AppError {
         Self {
             status,
             message: message.into(),
+            headers: None,
         }
+    }
+
+    pub fn with_headers(mut self, headers: HeaderMap) -> Self {
+        self.headers = Some(headers);
+        self
     }
 
     pub fn bad_request(message: impl Into<String>) -> Self {
@@ -30,6 +37,10 @@ impl AppError {
 
     pub fn too_many_requests(message: impl Into<String>) -> Self {
         Self::new(StatusCode::TOO_MANY_REQUESTS, message)
+    }
+
+    pub fn payload_too_large(message: impl Into<String>) -> Self {
+        Self::new(StatusCode::PAYLOAD_TOO_LARGE, message)
     }
 }
 
@@ -49,6 +60,12 @@ impl IntoResponse for AppError {
                 "status": self.status.as_u16(),
             }
         }));
+
+        if let Some(headers) = self.headers {
+            let mut response = (self.status, body).into_response();
+            response.headers_mut().extend(headers);
+            return response;
+        }
 
         (self.status, body).into_response()
     }

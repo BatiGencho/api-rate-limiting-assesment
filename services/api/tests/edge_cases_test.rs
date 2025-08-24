@@ -53,7 +53,7 @@ async fn test_malformed_json_edge_cases() {
 
     let extremely_nested = format!(
         "{{{}}}",
-        "\"a\":{".repeat(1000) + &"\"b\":1" + &"}".repeat(1000)
+        "\"a\":{".repeat(1000) + "\"b\":1" + &"}".repeat(1000)
     );
     let very_long_string = format!(
         "{{\"account_id\":\"{}\",\"data\":\"test\"}}",
@@ -89,7 +89,8 @@ async fn test_malformed_json_edge_cases() {
 
         // Should return 400 Bad Request or 422 Unprocessable Entity for malformed JSON
         assert!(
-            response.status() == StatusCode::BAD_REQUEST || response.status() == StatusCode::UNPROCESSABLE_ENTITY,
+            response.status() == StatusCode::BAD_REQUEST
+                || response.status() == StatusCode::UNPROCESSABLE_ENTITY,
             "Malformed JSON '{}' should return 400 Bad Request or 422 Unprocessable Entity, got {}",
             test_name,
             response.status()

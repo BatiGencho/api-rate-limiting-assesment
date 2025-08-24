@@ -18,16 +18,27 @@ down:
 
 # === Running the API ===
 
-# Run the API server
+# Run the API server in dev mode
 run:
     cargo run --bin api
+
+# Run the API server in release mode
+run-releave:
+    cargo run --bin api --release
 
 # Run with development environment variables
 run-dev:
     DATABASE_URL=postgres://postgres:postgres@localhost:5432/transaction_queue \
     REDIS_URL=redis://localhost:6379 \
-    RUST_LOG=transaction_queue_api=debug,tower_http=debug \
+    RUST_LOG=transaction_queue_api=debug,error,info,tower_http=debug \
     cargo run --bin api
+
+# Run with release environment variables
+run-release:
+    DATABASE_URL=postgres://postgres:postgres@localhost:5432/transaction_queue \
+    REDIS_URL=redis://localhost:6379 \
+    RUST_LOG=transaction_queue_api=debug,error,info,tower_http=debug \
+    cargo run --bin api --release
 
 # === Testing ===
 

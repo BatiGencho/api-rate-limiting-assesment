@@ -34,6 +34,7 @@ CREATE TABLE rate_limits (
 
 -- Create index
 CREATE INDEX idx_rate_limits_account_id ON rate_limits(account_id);
+CREATE INDEX idx_rate_limits_account_id_limit_type ON rate_limits(account_id, limit_type);
 
 -- Create update trigger for updated_at
 CREATE OR REPLACE FUNCTION update_updated_at_column()

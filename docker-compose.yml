@@ -28,21 +28,31 @@ services:
       timeout: 5s
       retries: 5
 
-  api:
-    build: .
+  adminer:
+    image: adminer:latest
     ports:
-      - "3000:3000"
-    environment:
-      DATABASE_URL: postgres://postgres:postgres@postgres:5432/transaction_queue
-      REDIS_URL: redis://redis:6379
-      RUST_LOG: transaction_queue_api=debug,tower_http=debug
+      - "8080:8080"
     depends_on:
-      postgres:
-        condition: service_healthy
-      redis:
-        condition: service_healthy
-    volumes:
-      - ./.env:/app/.env:ro
+      - postgres
+    environment:
+      ADMINER_DEFAULT_SERVER: postgres
+
+  # api:
+  #   build: .
+  #   ports:
+  #     - "3000:3000"
+  #   environment:
+  #     DATABASE_URL: postgres://postgres:postgres@postgres:5432/transaction_queue
+  #     REDIS_URL: redis://redis:6379
+  #     RUST_LOG: transaction_queue_api=debug,tower_http=debug
+  #   depends_on:
+  #     postgres:
+  #       condition: service_healthy
+  #     redis:
+  #       condition: service_healthy
+  #   volumes:
+  #     - ./.env:/app/.env:ro
 
 volumes:
   postgres_data:
+  pgadmin_data:

@@ -1,3 +1,3 @@
 pub mod database;
 
-pub use database::{DatabaseConnection, ReadOnlyDatabaseConnection};
+pub use database::ReadOnlyDatabaseConnection;

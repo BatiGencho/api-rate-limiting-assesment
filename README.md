@@ -165,7 +165,7 @@ Your implementation should be **guided by the test suite** - implement features 
 **Goal**: Get basic transaction submission working
 ```bash
 # Test to make pass first:
-cargo test test_submit_transaction_success --exact
+cargo test test_submit_transaction_success -- --exact
 ```
 **Focus**: 
 - Basic POST `/v1/transactions/submit` endpoint
@@ -177,8 +177,8 @@ cargo test test_submit_transaction_success --exact
 **Goal**: Implement per-account rate limiting
 ```bash
 # Tests to make pass:
-cargo test test_basic_rate_limiting --exact
-cargo test test_per_account_rate_limiting --exact
+cargo test test_basic_rate_limiting -- --exact
+cargo test test_per_account_rate_limiting -- --exact
 ```
 **Focus**:
 - Redis-based sliding window rate limiting
@@ -190,8 +190,8 @@ cargo test test_per_account_rate_limiting --exact
 **Goal**: FIFO queue with priority support
 ```bash
 # Tests to make pass:
-cargo test test_sequential_queue_positions --exact
-cargo test test_priority_queue_ordering --exact
+cargo test test_sequential_queue_positions -- --exact
+cargo test test_priority_queue_ordering -- --exact
 ```
 **Focus**:
 - Queue position calculation

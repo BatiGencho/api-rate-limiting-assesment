@@ -36,7 +36,7 @@ impl TestClient {
         }
 
         self.client
-            .post(&format!("{}/v1/transactions/submit", self.base_url))
+            .post(format!("{}/v1/transactions/submit", self.base_url))
             .json(&payload)
             .send()
             .await
@@ -62,8 +62,11 @@ impl TestClient {
             response.text().await.unwrap_or_default()
         );
 
-        let body: Value = response.json().await.expect("Failed to parse JSON response");
-        
+        let body: Value = response
+            .json()
+            .await
+            .expect("Failed to parse JSON response");
+
         let transaction_id = body["transaction_id"]
             .as_str()
             .expect("Missing transaction_id")
@@ -111,7 +114,10 @@ impl TestClient {
             "Missing X-RateLimit-Reset header"
         );
 
-        response.json().await.expect("Failed to parse JSON response")
+        response
+            .json()
+            .await
+            .expect("Failed to parse JSON response")
     }
 }
 
@@ -168,19 +174,31 @@ impl TestData {
     }
 
     pub fn unique_account_id() -> String {
-        format!("client_{}", uuid::Uuid::new_v4().to_string().replace("-", "")[..12].to_string())
+        format!(
+            "client_{}",
+            &uuid::Uuid::new_v4().to_string().replace("-", "")[..12].to_string()
+        )
     }
 
     pub fn enterprise_account_id() -> String {
-        format!("enterprise_{}", uuid::Uuid::new_v4().to_string().replace("-", "")[..8].to_string())
+        format!(
+            "enterprise_{}",
+            &uuid::Uuid::new_v4().to_string().replace("-", "")[..8].to_string()
+        )
     }
 
     pub fn basic_tier_account_id() -> String {
-        format!("basic_{}", uuid::Uuid::new_v4().to_string().replace("-", "")[..8].to_string())
+        format!(
+            "basic_{}",
+            &uuid::Uuid::new_v4().to_string().replace("-", "")[..8].to_string()
+        )
     }
 
     pub fn premium_tier_account_id() -> String {
-        format!("premium_{}", uuid::Uuid::new_v4().to_string().replace("-", "")[..8].to_string())
+        format!(
+            "premium_{}",
+            &uuid::Uuid::new_v4().to_string().replace("-", "")[..8].to_string()
+        )
     }
 }
 
@@ -231,7 +249,12 @@ impl TestEnvironment {
     /// Check if the API server is running
     pub async fn check_api_server() -> bool {
         let client = TestClient::new();
-        match client.client.get(&format!("{}/health", API_BASE_URL)).send().await {
+        match client
+            .client
+            .get(format!("{}/health", API_BASE_URL))
+            .send()
+            .await
+        {
             Ok(response) => response.status().is_success(),
             Err(_) => false,
         }
@@ -273,25 +296,31 @@ pub struct PerformanceMetrics {
 impl PerformanceMetrics {
     pub fn calculate(durations: &mut [Duration], total_duration: Duration) -> Self {
         durations.sort_unstable();
-        
+
         let total_requests = durations.len();
         let successful_requests = total_requests; // All durations represent successful requests
         let failed_requests = 0; // Failed requests don't have durations
-        
+
         let durations_ms: Vec<u128> = durations.iter().map(|d| d.as_millis()).collect();
-        
+
         let min_duration_ms = durations_ms.first().copied().unwrap_or(0);
         let max_duration_ms = durations_ms.last().copied().unwrap_or(0);
         let avg_duration_ms = durations_ms.iter().sum::<u128>() as f64 / total_requests as f64;
-        
+
         let p95_index = (total_requests as f64 * 0.95) as usize;
         let p99_index = (total_requests as f64 * 0.99) as usize;
-        
-        let p95_duration_ms = durations_ms.get(p95_index.saturating_sub(1)).copied().unwrap_or(0);
-        let p99_duration_ms = durations_ms.get(p99_index.saturating_sub(1)).copied().unwrap_or(0);
-        
+
+        let p95_duration_ms = durations_ms
+            .get(p95_index.saturating_sub(1))
+            .copied()
+            .unwrap_or(0);
+        let p99_duration_ms = durations_ms
+            .get(p99_index.saturating_sub(1))
+            .copied()
+            .unwrap_or(0);
+
         let requests_per_second = total_requests as f64 / total_duration.as_secs_f64();
-        
+
         Self {
             total_requests,
             successful_requests,
@@ -310,8 +339,10 @@ impl PerformanceMetrics {
         println!("Total Requests: {}", self.total_requests);
         println!("Successful: {}", self.successful_requests);
         println!("Failed: {}", self.failed_requests);
-        println!("Success Rate: {:.2}%", 
-            (self.successful_requests as f64 / self.total_requests as f64) * 100.0);
+        println!(
+            "Success Rate: {:.2}%",
+            (self.successful_requests as f64 / self.total_requests as f64) * 100.0
+        );
         println!();
         println!("Response Times (ms):");
         println!("  Min: {}", self.min_duration_ms);
@@ -320,7 +351,10 @@ impl PerformanceMetrics {
         println!("  P95: {}", self.p95_duration_ms);
         println!("  P99: {}", self.p99_duration_ms);
         println!();
-        println!("Throughput: {:.2} requests/second", self.requests_per_second);
+        println!(
+            "Throughput: {:.2} requests/second",
+            self.requests_per_second
+        );
         println!("=============================");
     }
 

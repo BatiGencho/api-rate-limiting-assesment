@@ -28,7 +28,12 @@ pub struct NewRateLimit {
 }
 
 impl NewRateLimit {
-    pub fn new(account_id: String, limit_type: String, max_requests: i32, window_seconds: i32) -> Self {
+    pub fn new(
+        account_id: String,
+        limit_type: String,
+        max_requests: i32,
+        window_seconds: i32,
+    ) -> Self {
         Self {
             id: Uuid::new_v4(),
             account_id,

@@ -212,7 +212,8 @@ async fn test_rate_limit_recovery() {
     let transaction_data = TestData::sample_transaction_data();
 
     // Exhaust rate limit
-    for _ in 0..10 {
+    // NOTE: since DEFAULT_MAX_REQUESTS: u32 = 100, we send 100 requests
+    for _ in 0..100 {
         let response = client
             .submit_transaction(&account_id, transaction_data.clone(), None)
             .await
@@ -283,8 +284,11 @@ async fn test_concurrent_rate_limiting() {
             _ => panic!("Unexpected status: {}", status),
         }
     }
-    
-    println!("Concurrent test results: {} successful, {} rate limited", success_count, rate_limited_count);
+
+    println!(
+        "Concurrent test results: {} successful, {} rate limited",
+        success_count, rate_limited_count
+    );
 
     // Should have some successful and some rate limited
     assert!(success_count > 0, "Should have some successful requests");

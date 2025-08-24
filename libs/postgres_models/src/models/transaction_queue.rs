@@ -36,9 +36,9 @@ pub struct NewTransactionQueue {
 }
 
 impl NewTransactionQueue {
-    pub fn new(account_id: String, transaction_data: serde_json::Value) -> Self {
+    pub fn new(id: Uuid, account_id: String, transaction_data: serde_json::Value) -> Self {
         Self {
-            id: Uuid::new_v4(),
+            id,
             account_id,
             transaction_data,
             status: "pending".to_string(),

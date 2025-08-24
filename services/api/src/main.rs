@@ -1,5 +1,5 @@
 use anyhow::Result;
-use axum::{Router, Json};
+use axum::{Json, Router};
 use dotenvy::dotenv;
 use serde_json::json;
 use std::net::SocketAddr;
@@ -12,6 +12,7 @@ pub mod config;
 mod errors;
 mod extractors;
 mod lib;
+mod response;
 mod v1;
 
 use crate::config::Config;
@@ -24,7 +25,9 @@ async fn main() -> Result<()> {
 
     // Initialize tracing
     tracing_subscriber::fmt()
-        .with_target(false)
+        .with_target(true) // show target for debugging
+        .with_file(true)
+        .with_line_number(true)
         .with_env_filter(
             tracing_subscriber::EnvFilter::try_from_default_env()
                 .unwrap_or_else(|_| "transaction_queue_api=debug,tower_http=debug".into()),
